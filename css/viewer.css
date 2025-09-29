@@ -1,0 +1,184 @@
+html, body, #cesiumContainer {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: sans-serif;
+}
+
+.fullSize {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: none;
+    border-radius: 0;
+}
+
+/* Loading overlay */
+#loadingOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: white;
+}
+
+#loadingOverlay.hidden {
+    display: none;
+}
+
+.loading-content {
+    text-align: center;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Controls panel */
+#controlsPanel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+}
+
+#controlsPanel button {
+    background: rgba(42, 42, 42, 0.9);
+    border: none;
+    border-radius: 5px;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 40px;
+    height: 40px;
+    transition: background-color 0.3s;
+}
+
+#controlsPanel button:hover {
+    background: rgba(42, 42, 42, 1);
+}
+
+#controlsPanel button:active {
+    background: rgba(30, 30, 30, 1);
+}
+
+#controlsPanel button.active {
+    background: rgba(66, 139, 202, 0.9);
+    color: white;
+}
+
+#view3DBtn, #view2DBtn {
+    font-size: 12px;
+    width: 35px;
+    height: 35px;
+    padding: 5px;
+}
+
+/* Help panel */
+#helpPanel {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 400px;
+    z-index: 200;
+}
+
+#helpPanel.hidden {
+    display: none;
+}
+
+.help-content h3 {
+    margin-top: 0;
+    color: #3498db;
+}
+
+.help-content ul {
+    padding-left: 20px;
+}
+
+.help-content li {
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+#closeHelp {
+    background: #3498db;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+#closeHelp:hover {
+    background: #2980b9;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #controlsPanel {
+        top: 10px;
+        right: 10px;
+        gap: 8px;
+    }
+
+    #controlsPanel button {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    #helpPanel {
+        margin: 20px;
+        max-width: calc(100% - 40px);
+        padding: 15px;
+    }
+}
+
+/* Hide Cesium's default controls */
+.cesium-viewer-toolbar {
+    display: none !important;
+}
+
+.cesium-viewer-animationContainer {
+    display: none !important;
+}
+
+.cesium-viewer-timelineContainer {
+    display: none !important;
+}
+
+.cesium-viewer-bottom {
+    display: none !important;
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visor 3D - Aguara Country Club</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.133/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.133/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/viewer.css">
+</head>
+<body>
+    <div id="cesiumContainer" class="fullSize"></div>
+
+    <!-- Loading overlay -->
+    <div id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Cargando modelo 3D...</p>
+        </div>
+    </div>
+
+    <!-- Controls panel -->
+    <div id="controlsPanel">
+        <button id="landingBtn" title="Volver a la landing">⬅️</button>
+        <button id="homeBtn" title="Vista inicial">🏠</button>
+        <button id="view3DBtn" title="Vista 3D" class="active">3D</button>
+        <button id="view2DBtn" title="Vista 2D">2D</button>
+        <button id="helpBtn" title="Ayuda">❓</button>
+        <button id="fullscreenBtn" title="Pantalla completa">⛶</button>
+    </div>
+
+    <!-- Help panel -->
+    <div id="helpPanel" class="hidden">
+        <div class="help-content">
+            <h3>Controles de navegación</h3>
+            <ul>
+                <li><strong>Click izquierdo + arrastrar:</strong> Rotar vista</li>
+                <li><strong>Click derecho + arrastrar:</strong> Hacer zoom</li>
+                <li><strong>Click medio + arrastrar:</strong> Mover vista</li>
+                <li><strong>CTRL + arrastrar:</strong> Inclinar cámara</li>
+                <li><strong>Rueda del mouse:</strong> Zoom in/out</li>
+            </ul>
+            <p><em>Use el mouse y teclado para explorar la escena en 3D completo. Mantenga CTRL mientras arrastra para inclinar la cámara.</em></p>
+            <h4>Atajos de teclado</h4>
+            <ul>
+                <li><strong>H:</strong> Vista inicial</li>
+                <li><strong>3:</strong> Vista 3D</li>
+                <li><strong>2:</strong> Vista 2D</li>
+                <li><strong>F:</strong> Pantalla completa</li>
+            </ul>
+            <button id="closeHelp">Cerrar</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/cesium-viewer.js"></script>
+</body>
+</html>
