@@ -91,6 +91,18 @@ html, body, #cesiumContainer {
     color: white;
 }
 
+#controlsPanel button[id*="measure"].active {
+    background: #e74c3c;
+    color: white;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
 #view3DBtn, #view2DBtn {
     font-size: 12px;
     width: 35px;

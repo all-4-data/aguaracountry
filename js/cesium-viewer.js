@@ -7,6 +7,9 @@ let tileset = null;
 let orthophotoLayer = null;
 let is3DMode = true;
 let initialCameraPosition = null;
+let measurementMode = null; // 'distance' or null
+let measurementPoints = [];
+let measurementEntities = [];
 
 function initViewer() {
     // Cesium Ion access token
@@ -24,6 +27,7 @@ function initViewer() {
         vrButton: false,
         infoBox: false,
         selectionIndicator: false,
+        terrainProvider: new Cesium.EllipsoidTerrainProvider(),
         // Set initial camera position at creation
         camera: {
             destination: Cesium.Cartesian3.fromDegrees(-58.5, -27.5, 10000),
@@ -74,6 +78,7 @@ async function loadAssets() {
         await loadBarrioContour();
 
         setInitialCameraPosition();
+        initMeasurementTools();
         hideLoading();
 
     } catch (error) {
@@ -184,6 +189,99 @@ function addBarrioLabel(contourDataSource) {
     }
 }
 
+function initMeasurementTools() {
+    viewer.canvas.addEventListener('click', function(event) {
+        if (measurementMode) {
+            const pickedPosition = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(event.clientX, event.clientY), viewer.scene.globe.ellipsoid);
+            if (pickedPosition) {
+                handleMeasurementClick(pickedPosition);
+            }
+        }
+    });
+}
+
+function handleMeasurementClick(position) {
+    measurementPoints.push(position);
+
+    // Add point marker
+    const pointEntity = viewer.entities.add({
+        position: position,
+        point: {
+            pixelSize: 10,
+            color: Cesium.Color.YELLOW,
+            outlineColor: Cesium.Color.BLACK,
+            outlineWidth: 2,
+            heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+        }
+    });
+    measurementEntities.push(pointEntity);
+
+    if (measurementPoints.length === 2) {
+        calculateMeasurement();
+        measurementPoints = [];
+        measurementMode = null;
+        updateMeasurementButtons();
+    }
+}
+
+function calculateMeasurement() {
+    const point1 = measurementPoints[0];
+    const point2 = measurementPoints[1];
+
+    if (measurementMode === 'distance') {
+        // Calculate horizontal distance
+        const distance = Cesium.Cartesian3.distance(point1, point2);
+
+        // Add line
+        const lineEntity = viewer.entities.add({
+            polyline: {
+                positions: [point1, point2],
+                width: 3,
+                material: Cesium.Color.YELLOW,
+                clampToGround: true
+            }
+        });
+        measurementEntities.push(lineEntity);
+
+        // Add label with distance
+        const midpoint = Cesium.Cartesian3.midpoint(point1, point2, new Cesium.Cartesian3());
+        const labelEntity = viewer.entities.add({
+            position: midpoint,
+            label: {
+                text: `${distance.toFixed(2)} m`,
+                font: '14px Arial',
+                fillColor: Cesium.Color.WHITE,
+                outlineColor: Cesium.Color.BLACK,
+                outlineWidth: 2,
+                style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                pixelOffset: new Cesium.Cartesian2(0, -30),
+                heightReference: Cesium.HeightReference.CLAMP_TO_GROUND
+            }
+        });
+        measurementEntities.push(labelEntity);
+    }
+}
+
+function startDistanceMeasurement() {
+    measurementMode = 'distance';
+    measurementPoints = [];
+    updateMeasurementButtons();
+}
+
+
+function clearMeasurements() {
+    measurementEntities.forEach(entity => viewer.entities.remove(entity));
+    measurementEntities = [];
+    measurementPoints = [];
+    measurementMode = null;
+    updateMeasurementButtons();
+}
+
+function updateMeasurementButtons() {
+    const distanceBtn = document.getElementById('measureDistanceBtn');
+    distanceBtn.classList.toggle('active', measurementMode === 'distance');
+}
+
 function setInitialCameraPosition() {
     // Use zoomTo to get a closer ground-level view of the tileset
     viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(
@@ -229,6 +327,15 @@ function setupControls() {
         toggle2DView();
     });
 
+    // Measurement tools
+    document.getElementById('measureDistanceBtn').addEventListener('click', () => {
+        startDistanceMeasurement();
+    });
+
+    document.getElementById('clearMeasurementsBtn').addEventListener('click', () => {
+        clearMeasurements();
+    });
+
     // Help button
     document.getElementById('helpBtn').addEventListener('click', () => {
         toggleHelp();
@@ -265,6 +372,14 @@ function setupControls() {
             case 'f':
             case 'F':
                 toggleFullscreen();
+                break;
+            case 'd':
+            case 'D':
+                startDistanceMeasurement();
+                break;
+            case 'c':
+            case 'C':
+                clearMeasurements();
                 break;
             case 'Escape':
                 hideHelp();
